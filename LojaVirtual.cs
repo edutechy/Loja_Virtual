@@ -27,17 +27,19 @@ using System.Text;
 using System.Data.SQLite;
 using System.Data.SqlTypes;
 
-namespace Sistema_Loja_Virtual
+namespace Loja_Virtual
 {
     public class LojaVirtual
     {
         private string connectionString = "Data Source=loja_virtual.db";
 
+        // Construtor da classe Loja_Virtual
         public LojaVirtual()
         {
             CriarBaseDeDados();
         }
 
+        // Método para criar a base de dados e as tabelas produtos, clientes e carrinhodecompras.
         private void CriarBaseDeDados()
         {
             try
@@ -68,7 +70,7 @@ namespace Sistema_Loja_Virtual
                         cmd.ExecuteNonQuery();
                     }
 
-                    string criarCarrinho = @"CREATE TABLE IF NOT EXISTS carrinhodecompra (
+                    string criarCarrinho = @"CREATE TABLE IF NOT EXISTS carrinhodecompras (
                                     Email TEXT,
                                     CodigoProduto INTEGER,
                                     Quantidade INTEGER,
@@ -87,37 +89,53 @@ namespace Sistema_Loja_Virtual
             }
         }
 
+        // Método para registo de um produto na tabela produtos
         public void RegistarProduto(Produto produto)
         {
-            using (var connection = new SQLiteConnection(connectionString))
+            try
             {
-                connection.Open();
-                
-                string numeroMaximoProdutos = @"SELECT MAX(Codigo) FROM produtos"; // Lê o numero máximo de produtos em stock
-                var cmd = new SQLiteCommand(numeroMaximoProdutos, connection);
-                var reader = cmd.ExecuteReader();
-
-                long codigoMax = 0;
-                if (reader.Read())
+                using (var connection = new SQLiteConnection(connectionString))
                 {
-                    codigoMax = (long) reader["MAX(Codigo)"];
+                    connection.Open();
+                    try 
+                    { 
+
+                        string numeroMaximoProdutos = @"SELECT MAX(Codigo) FROM produtos"; // Lê o numero máximo de produtos em stock
+                        var cmd = new SQLiteCommand(numeroMaximoProdutos, connection);
+                        var reader = cmd.ExecuteReader();
+
+                        long codigoMax = 0;
+                        if (reader.Read())
+                        {
+                            codigoMax = (long)reader["MAX(Codigo)"];
+                        }
+
+                        // DEBUG: O campo código é chave primária e é necessário garantir que este não seja duplicado.
+                        // Console.WriteLine("O código do produto max:" + codigoMax);
+
+                        string inserirProduto = @"INSERT INTO produtos (Codigo, Nome, Descricao, Preco, Disponiveis) 
+                                                   VALUES (@Codigo, @Nome, @Descricao, @Preco, @Disponiveis)";
+                        cmd = new SQLiteCommand(inserirProduto, connection);
+                        cmd.Parameters.AddWithValue("@Codigo", codigoMax + 1);
+                        cmd.Parameters.AddWithValue("@Nome", produto.Nome);
+                        cmd.Parameters.AddWithValue("@Descricao", produto.Descricao);
+                        cmd.Parameters.AddWithValue("@Preco", produto.Preco);
+                        cmd.Parameters.AddWithValue("@Disponiveis", produto.Disponiveis);
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao inserir na tabela de produtos: {ex.Message}");
+                    }
                 }
-
-                // DEBUG: O campo código é chave primária e é necessário garantir que este não seja duplicado.
-                // Console.WriteLine("O código do produto max:" + codigoMax);
-
-                string inserirProduto = @"INSERT INTO produtos (Codigo, Nome, Descricao, Preco, Disponiveis) 
-                                               VALUES (@Codigo, @Nome, @Descricao, @Preco, @Disponiveis)";
-                cmd = new SQLiteCommand(inserirProduto, connection);
-                cmd.Parameters.AddWithValue("@Codigo", codigoMax + 1);
-                cmd.Parameters.AddWithValue("@Nome", produto.Nome);
-                cmd.Parameters.AddWithValue("@Descricao", produto.Descricao);
-                cmd.Parameters.AddWithValue("@Preco", produto.Preco);
-                cmd.Parameters.AddWithValue("@Disponiveis", produto.Disponiveis);
-                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao abrir a ligação à base de dados: {ex.Message}");
             }
         }
 
+        // Método para registo de um cliente na tabela clientes
         public void RegistarCliente(Cliente cliente, string numeroCartaoCredito)
         {
             try
@@ -150,6 +168,7 @@ namespace Sistema_Loja_Virtual
             }
         }
 
+        // Método para registo de uma compra na tabela carrinhodecompras
         public void RegistoDeCompra(Cliente cliente, Produto produto)
         {
             try
@@ -159,7 +178,7 @@ namespace Sistema_Loja_Virtual
                     connection.Open();
                     try
                     {
-                        string inserirCarrinhoDeCompras = @"INSERT INTO carrinhodecompra (Email, CodigoProduto, Quantidade, CompraFechada) 
+                        string inserirCarrinhoDeCompras = @"INSERT INTO carrinhodecompras (Email, CodigoProduto, Quantidade, CompraFechada) 
                                                     VALUES (@Email, @CodigoProduto, @Quantidade, @CompraFechada)";
                         using (var cmd = new SQLiteCommand(inserirCarrinhoDeCompras, connection))
                         {
@@ -187,6 +206,7 @@ namespace Sistema_Loja_Virtual
             }
         }
 
+        // Método para listar todos os produtos da loja
         public void ListarProdutos()
         {
             try
@@ -224,57 +244,88 @@ namespace Sistema_Loja_Virtual
             }
         }
 
-        public Produto ObterProdutoPorCodigo(int codigo)
+        // Método para ler um produto da base de dados a partir do código do produto
+        public Produto ObterProdutoPorCodigo(long codigo)
         {
-
-            using (var connection = new SQLiteConnection(connectionString))
+            try
             {
-                connection.Open();
-                string obterProduto = "SELECT * FROM produtos WHERE Codigo = @Codigo";
-                var cmd = new SQLiteCommand(obterProduto, connection);
-                cmd.Parameters.AddWithValue("@Codigo", codigo);
-                using (var reader = cmd.ExecuteReader())
+                using (var connection = new SQLiteConnection(connectionString))
                 {
-                    if (reader.Read())
+                    connection.Open();
+                    try
                     {
-                        Console.WriteLine("Produto encontrado.");
-                        return new Produto(
-                            (long)reader["Codigo"],
-                            (string)reader["Nome"],
-                            (string)reader["Descricao"],
-                            (double)reader["Preco"],
-                            (long)reader["Disponiveis"]
-                        );
+                        string obterProduto = "SELECT * FROM produtos WHERE Codigo = @Codigo";
+                        using (var cmd = new SQLiteCommand(obterProduto, connection))
+                        {
+                            cmd.Parameters.AddWithValue("@Codigo", codigo);
+                            using (var reader = cmd.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    Console.WriteLine("Produto encontrado.");
+                                    return new Produto(
+                                        (long)reader["Codigo"],
+                                        (string)reader["Nome"],
+                                        (string)reader["Descricao"],
+                                        (double)reader["Preco"],
+                                        (long)reader["Disponiveis"]
+                                    );
+                                }
+                            }
+                        }
+                    } catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao ler o produto: {ex.Message}");
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao abrir a ligação com a base de dados: {ex.Message}");
             }
 
             return null;
         }
-      
+
+        // Método para ler um cliente da base de dados a partir do email
         public Cliente ObterClientePorEmail(string email)
         {
-            using (var connection = new SQLiteConnection(connectionString))
+            try
             {
-                connection.Open();
-                string obterCliente = "SELECT * FROM clientes WHERE Email = @Email";
-                var cmd = new SQLiteCommand(obterCliente, connection);
-                cmd.Parameters.AddWithValue("@Email", email);
-                using (var reader = cmd.ExecuteReader())
+                using (var connection = new SQLiteConnection(connectionString))
                 {
-                    if (reader.Read())
+                    connection.Open();
+                    try
                     {
-                        var cliente = new Cliente(
-                            (string)reader["Nome"],
-                            (string)reader["Endereco"],
-                            (string)reader["Email"],
-                            (string)reader["MeioDePagamento"],
-                            (string)reader["NumeroCartaoCredito"]
-                        );
-                        cliente.SetNumeroCartaoCredito((string)reader["NumeroCartaoCredito"]);
-                        return cliente;
+                        // Consulta para ler um cliente apartir do email
+                        string obterCliente = "SELECT * FROM clientes WHERE Email = @Email";
+                        var cmd = new SQLiteCommand(obterCliente, connection);
+                        cmd.Parameters.AddWithValue("@Email", email);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                var cliente = new Cliente(
+                                    (string)reader["Nome"],
+                                    (string)reader["Endereco"],
+                                    (string)reader["Email"],
+                                    (string)reader["MeioDePagamento"],
+                                    (string)reader["NumeroCartaoCredito"]
+                                );
+                                cliente.SetNumeroCartaoCredito((string)reader["NumeroCartaoCredito"]);
+                                return cliente;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao ler o cliente: {ex.Message}");
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao abrir a ligação com a base de dados: {ex.Message}");
             }
             return null;
         }
@@ -285,7 +336,7 @@ namespace Sistema_Loja_Virtual
             cliente.CarrinhoDeCompras.Clear(); // Limpa a lista antes de carregar novos itens
 
             string consulta = "SELECT p.Codigo, p.Nome, p.Descricao, p.Preco, p.Disponiveis " +
-                              "FROM carrinhodecompra c " +
+                              "FROM carrinhodecompras c " +
                               "INNER JOIN produtos p ON c.CodigoProduto = p.Codigo " +
                               "WHERE c.Email = @Email AND c.CompraFechada = 0";
             try
@@ -297,24 +348,35 @@ namespace Sistema_Loja_Virtual
                     command.Parameters.AddWithValue("@Email", cliente.Email);
 
                     connection.Open();
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    try
                     {
-                        while (reader.Read())
+                        using (SQLiteDataReader reader = command.ExecuteReader())
                         {
-                            Produto produto = new Produto
-                            (
-                                Convert.ToInt64(reader["Codigo"]),
-                                Convert.ToString(reader["Nome"]),
-                                Convert.ToString(reader["Descricao"]),
-                                Convert.ToDouble(reader["Preco"]),
-                                Convert.ToInt64(reader["Disponiveis"])
-                            );
-                            cliente.CarrinhoDeCompras.Add(produto);
+                            while (reader.Read())
+                            {
+                                Produto produto = new Produto
+                                (
+                                    Convert.ToInt64(reader["Codigo"]),
+                                    Convert.ToString(reader["Nome"]),
+                                    Convert.ToString(reader["Descricao"]),
+                                    Convert.ToDouble(reader["Preco"]),
+                                    Convert.ToInt64(reader["Disponiveis"])
+                                );
+                                cliente.CarrinhoDeCompras.Add(produto);
+                            }
                         }
+                        // DEBUG: Old school
+                        // Console.WriteLine(" TOTAL COMPRAS: " + cliente.CarrinhoDeCompras.Count());
+                        connection.Close();
                     }
-                    // DEBUG: OLd school
-                    // Console.WriteLine(" TOTAL COMPRAS: " + cliente.CarrinhoDeCompras.Count());
-                    connection.Close();
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao ler as transações do carrinho de compras: {ex.Message}");
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
                 }
             }
             catch (Exception ex)
@@ -322,6 +384,8 @@ namespace Sistema_Loja_Virtual
                 Console.WriteLine($"Erro ao carregar o carrinho de compras: {ex.Message}");
             }
         }
+      
+        // Método para finalização de uma venda (transação).
         public void ProcessarVenda(Cliente cliente)
         {
           using (var connection = new SQLiteConnection(connectionString))
@@ -344,7 +408,7 @@ namespace Sistema_Loja_Virtual
                         }
 
                         // Update shopping cart
-                        string atualizaCarrinhoDeCompras = @"UPDATE carrinhodecompra 
+                        string atualizaCarrinhoDeCompras = @"UPDATE carrinhodecompras 
                                                             SET CompraFechada = 1 
                                                             WHERE Email = @Email AND 
                                                                     CodigoProduto = @CodigoProduto AND 

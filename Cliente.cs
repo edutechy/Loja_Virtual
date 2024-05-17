@@ -29,7 +29,7 @@ using System.Security.Cryptography;
 using Microsoft.Data.Sqlite;
 using System.Data.SQLite;
 
-namespace Sistema_Loja_Virtual
+namespace Loja_Virtual
 {
     public class Cliente
     {

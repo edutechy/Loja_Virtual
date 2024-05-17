@@ -26,7 +26,7 @@
 // -----------------------------------------------------------------------
 
 
-using Sistema_Loja_Virtual;
+using Loja_Virtual;
 
 class Program
 {
@@ -83,7 +83,8 @@ class Program
                     if (meioDePagamento.ToLower() == "cartao de credito")
                     {
                         Console.Write("Número do Cartão de Crédito: ");
-                        numeroCartaoCredito = Console.ReadLine();
+                        numeroCartaoCredito = Console.ReadLine();  
+                        // TODO: Encriptação do número de crédito para armazenamento na base de dados 
                     }
 
                     Cliente cliente = new Cliente(nomeCliente, endereco, email, meioDePagamento, numeroCartaoCredito);

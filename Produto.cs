@@ -20,7 +20,7 @@
 // </description>
 // -----------------------------------------------------------------------
 
-namespace Sistema_Loja_Virtual
+namespace Loja_Virtual
 {
     public class Produto
     {
