@@ -112,14 +112,14 @@ namespace Loja_Virtual
                             // que o retorno não é null.
                             // Se for então significa que estamos a inserir o primeiro produto na tabela.
                             // Nesse caso o codogoMax=0+1 (ver mais abaixo)
-                            if (!reader.IsDBNull(reader.GetOrdinal("MaxCodigo")))
+                            if (!reader.IsDBNull(reader.GetOrdinal("MAX(Codigo)")))
                             {
-                                codigoMax = (long)reader["MaxCodigo"];
+                                codigoMax = (long)reader["MAX(Codigo)"];
                             }
                         }
 
                         // DEBUG: O campo código é chave primária e é necessário garantir que este não seja duplicado.
-                        // Console.WriteLine("O código do produto max:" + codigoMax);
+                        Console.WriteLine("O código do produto max:" + codigoMax);
 
                         string inserirProduto = @"INSERT INTO produtos (Codigo, Nome, Descricao, Preco, Disponiveis) 
                                                    VALUES (@Codigo, @Nome, @Descricao, @Preco, @Disponiveis)";

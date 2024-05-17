@@ -27,6 +27,7 @@
 
 
 using Loja_Virtual;
+using System.Globalization;
 
 class Program
 {
@@ -60,8 +61,26 @@ class Program
                     string nome = Console.ReadLine();
                     Console.Write("Descrição do Produto: ");
                     string descricao = Console.ReadLine();
-                    Console.Write("Preço do Produto: ");
-                    double preco = double.Parse(Console.ReadLine());
+                    bool flag = true;
+                    double preco = 0;
+                    while (flag)
+                    { 
+                        try
+                        {
+                            Console.Write("Preço do Produto: ");
+                            preco = double.Parse(Console.ReadLine());
+                            flag = false;
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("Formato de preço inválido. Por favor, use um separador decimal adequado (',' ou '.').");
+                            flag = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Ocorreu um erro: {ex.Message}");
+                        }
+                    }
                     Console.Write("Quantidade Disponível: ");
                     int disponiveis = int.Parse(Console.ReadLine());
 
