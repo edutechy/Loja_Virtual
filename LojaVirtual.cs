@@ -105,9 +105,17 @@ namespace Loja_Virtual
                         var reader = cmd.ExecuteReader();
 
                         long codigoMax = 0;
+                        // A condição do if é verdadeira quando o comando executado retornar dados
                         if (reader.Read())
                         {
-                            codigoMax = (long)reader["MAX(Codigo)"];
+                            // Na primeira vez a tabela não tem dados então temos de despitar
+                            // que o retorno não é null.
+                            // Se for então significa que estamos a inserir o primeiro produto na tabela.
+                            // Nesse caso o codogoMax=0+1 (ver mais abaixo)
+                            if (!reader.IsDBNull(reader.GetOrdinal("MaxCodigo")))
+                            {
+                                codigoMax = (long)reader["MaxCodigo"];
+                            }
                         }
 
                         // DEBUG: O campo código é chave primária e é necessário garantir que este não seja duplicado.
