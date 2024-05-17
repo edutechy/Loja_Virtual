@@ -1,4 +1,32 @@
-﻿using Biblioteca_Loja_Virtual;
+﻿// -----------------------------------------------------------------------
+// <file>Program.cs</file>
+// <author>edutechy</author>
+// <date>2024-05-15</date>
+// <description>
+// Este ficheiro contém o programa principal para a aplicação da loja virtual.
+// O programa permite o registo de clientes, adicionar produtos, a gestão do 
+// carrinho de compras e processar transações de compra. 
+//
+// Funcionalidades principais:
+// - Registo novos clientes.
+// - Adicionar novos produtos ao inventário.
+// - Listar produtos disponíveis.
+// - Adicionar produtos ao carrinho de compras do cliente.
+// - Processar o pagamento dos itens no carrinho de compras.
+// - Atualizar o inventário de produtos após a compra.
+//
+// O programa utiliza uma  base de dados SQLite para armazenar as informações
+// de clientes, produtos e transações. Inclui funcionalidades para
+// ler e escrever dados na base de dados, bem como para a gestão das
+// operações básicas de uma loja virtual.
+//
+// Este código demonstra conceitos fundamentais da programação orientada a
+// objetos, como classes, objetos, métodos e interação com base de dados.
+// </description>
+// -----------------------------------------------------------------------
+
+
+using Sistema_Loja_Virtual;
 
 class Program
 {
@@ -16,13 +44,15 @@ class Program
             Console.WriteLine("4. Remover Produto do Carrinho");
             Console.WriteLine("5. Finalizar Compra");
             Console.WriteLine("6. Listar Produtos");
-            Console.WriteLine("7. Sair");
+            Console.WriteLine("7. Listar Carrinho De Compras");
+            Console.WriteLine("8. Sair");
             Console.Write("Escolha uma opção: ");
 
             string escolha = Console.ReadLine();
 
             switch (escolha)
             {
+                // Registar produto
                 case "1":
                     Console.Write("Código do Produto: ");
                     int codigo = int.Parse(Console.ReadLine());
@@ -39,6 +69,7 @@ class Program
                     loja.RegistarProduto(produto);
                     break;
 
+                // Registar cliente
                 case "2":
                     Console.Write("Nome do Cliente: ");
                     string nomeCliente = Console.ReadLine();
@@ -64,20 +95,23 @@ class Program
                     Console.Write("Email do Cliente: ");
                     email = Console.ReadLine();
                     cliente = loja.ObterClientePorEmail(email);
+                    loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
                     if (cliente != null)
                     {
                         Console.Write("Código do Produto: ");
                         codigo = int.Parse(Console.ReadLine());
                         produto = loja.ObterProdutoPorCodigo(codigo);
-                        Console.WriteLine("Produto disponiveis: " + produto.Disponiveis + " Código: " + codigo);
-                        if (produto != null ) // && produto.Disponiveis > 0)
+                        //Console.WriteLine("Produto disponiveis: " + produto.Disponiveis + " Código: " + codigo);
+                        if (produto != null && produto.Disponiveis > 0)
                         {
                             cliente.AdicionarAoCarrinho(produto);
+                            cliente.ListarCarrinhoDeCompras();
+                            loja.RegistoDeCompra(cliente, produto);
                             Console.WriteLine("Produto adicionado ao carrinho.");
                         }
                         else
                         {
-                            Console.WriteLine("Produto não encontrado ou fora de estoque.");
+                            Console.WriteLine("Produto não encontrado ou não há disponibilidade.");
                         }
                     }
                     else
@@ -86,10 +120,12 @@ class Program
                     }
                     break;
 
+                // Remover produto do carrinho de compras
                 case "4":
                     Console.Write("Email do Cliente: ");
                     email = Console.ReadLine();
                     cliente = loja.ObterClientePorEmail(email);
+                    loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
                     if (cliente != null)
                     {
                         Console.Write("Código do Produto: ");
@@ -111,10 +147,12 @@ class Program
                     }
                     break;
 
+                // Finalização da compra
                 case "5":
                     Console.Write("Email do Cliente: ");
                     email = Console.ReadLine();
                     cliente = loja.ObterClientePorEmail(email);
+                    loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
                     if (cliente != null)
                     {
                         double total = cliente.CalcularTotal();
@@ -127,11 +165,29 @@ class Program
                     }
                     break;
 
+                // Listar todos os produtos da loja
                 case "6":
                     loja.ListarProdutos();
                     break;
 
+                // Listar carrinho de compras de um cliente
                 case "7":
+                    Console.Write("Email do Cliente: ");
+                    email = Console.ReadLine();
+                    cliente = loja.ObterClientePorEmail(email);
+                    loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
+                    if (cliente != null)
+                    {
+                        cliente.ListarCarrinhoDeCompras();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cliente não encontrado.");
+                    }
+                    break;
+   
+                // Sair do programa
+                case "8":
                     sair = true;
                     break;
 

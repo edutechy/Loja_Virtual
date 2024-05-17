@@ -1,9 +1,35 @@
-﻿using System.Text;
+﻿// -----------------------------------------------------------------------
+// <file>Cliente.cs</file>
+// <author>edutechy</author>
+// <date>2024-05-15</date>
+// <description>
+// Esta classe representa um cliente na aplicação de loja virtual.
+// Cada cliente é identificado por um email único e pode ter um nome associado.
+// A classe contém métodos para registrar um novo cliente e fazer a gestão do 
+// carrinho de compras do cliente.
+//
+// Principais Funcionalidades:
+// - Registo de um novo cliente com email e nome.
+// - Adicionar produtos ao carrinho de compras do cliente.
+// - Listar produtos no carrinho de compras.
+// - Processar pagamentos e fechar compras no carrinho.
+//
+// Esta classe encapsula os dados e comportamentos relacionados a um cliente
+// na loja virtual, seguindo os princípios de encapsulamento e modularidade
+// da programação orientada a objetos.
+// </description>
+// -----------------------------------------------------------------------
+
+
+
 using System;
-using Microsoft.Data.Sqlite;
+using System.Text;
 using System.Security.Cryptography;
 
-namespace Biblioteca_Loja_Virtual
+using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
+
+namespace Sistema_Loja_Virtual
 {
     public class Cliente
     {
@@ -11,7 +37,7 @@ namespace Biblioteca_Loja_Virtual
         public string Endereco { get; set; }
         public string Email { get; set; }
         public string MeioDePagamento { get; set; } // Novo campo
-        public string NumeroCartaoCredito { get; set; } // Novo campo
+        public string NumeroCartaoCredito { get; set; } // Número do Cartão de crédito
         public List<Produto> CarrinhoDeCompras { get; set; }
 
 
@@ -22,9 +48,9 @@ namespace Biblioteca_Loja_Virtual
             Email = email;
             MeioDePagamento = meioDePagamento;
             NumeroCartaoCredito = Encrypt(numeroCartaoCredito); // Encripta o número do cartão de crédito ao criar o cliente
-      
+
             CarrinhoDeCompras = new List<Produto>(); // Inicializa a lista no construtor
-    
+
         }
         public string GetNumeroCartaoCredito()
         {
@@ -35,6 +61,7 @@ namespace Biblioteca_Loja_Virtual
         {
             this.NumeroCartaoCredito = numeroCartaoCredito;
         }
+
         // Método para encriptar o número do cartão de crédito
         private string Encrypt(string input)
         {
@@ -42,29 +69,42 @@ namespace Biblioteca_Loja_Virtual
             return input; // Por enquanto, apenas retorna o número original (implementação simulada)
         }
 
+        public void AdicionarAoCarrinho(Produto produto)
+        {
+            CarrinhoDeCompras.Add(produto);
+        }
 
-            public void AdicionarAoCarrinho(Produto produto)
+        public void RemoverDoCarrinho(Produto produto)
+        {
+            CarrinhoDeCompras.Remove(produto);
+        }
+
+        public double CalcularTotal()
+        {
+            double total = 0;
+
+            foreach (var produto in CarrinhoDeCompras)
             {
-                CarrinhoDeCompras.Add(produto);
+                total += produto.Preco;
             }
+            return total;
+        }
 
-            public void RemoverDoCarrinho(Produto produto)
+        public void ListarCarrinhoDeCompras()
+        {
+            Console.WriteLine("Produtos no Carrinho de Compras:");
+            if (CarrinhoDeCompras.Count == 0)
             {
-                CarrinhoDeCompras.Remove(produto);
+                Console.WriteLine("O carrinho de compras está vazio.");
             }
-
-            public double CalcularTotal()
+            else
             {
-                double total = 0;
-
                 foreach (var produto in CarrinhoDeCompras)
                 {
-                    total += produto.Preco;
+                    Console.WriteLine($"Código: {produto.Codigo}, Nome: {produto.Nome}, Preço: {produto.Preco:C}");
                 }
-                return total;
             }
         }
 
-    
-
-}
+    }
+ }
