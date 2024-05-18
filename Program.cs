@@ -9,13 +9,13 @@
 //
 // Funcionalidades principais:
 // - Registo novos clientes.
-// - Adicionar novos produtos ao inventário.
-// - Listar produtos disponíveis.
+// - Adicionar novos produtos ao catálogo da loja.
+// - Listar catálogo de produtos disponíveis.
 // - Adicionar produtos ao carrinho de compras do cliente.
 // - Processar o pagamento dos itens no carrinho de compras.
-// - Atualizar o inventário de produtos após a compra.
+// - Atualizar o catálogo de produtos após a compra.
 //
-// O programa utiliza uma  base de dados SQLite para armazenar as informações
+// O programa utiliza uma base de dados SQLite para armazenar as informações
 // de clientes, produtos e transações. Inclui funcionalidades para
 // ler e escrever dados na base de dados, bem como para a gestão das
 // operações básicas de uma loja virtual.

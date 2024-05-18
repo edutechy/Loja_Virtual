@@ -5,12 +5,12 @@
 // Esta classe representa a aplicação de loja virtual, que faz a gestão de clientes,
 // produtos e transações de compra.
 // A classe contém métodos para interagir com a base de dados SQLite, 
-// registo de novos clientes, adicionar produtos ao inventário, gerir o
+// registo de novos clientes, adicionar produtos ao catálogo de produtos, gerir o
 // carrinho de compras e processar transações de compra.
 //
 // Principais Funcionalidades:
 // - Registo de novos clientes.
-// - Adicionar novos produtos ao inventário.
+// - Adicionar novos produtos ao catálogo.
 // - Listar produtos disponíveis.
 // - Adicionar produtos ao carrinho de compras do cliente.
 // - Processar pagamentos e fechar compras.

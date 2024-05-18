@@ -5,12 +5,12 @@
 // <description>
 // Esta classe representa um produto na aplicação de loja virtual.
 // Cada produto tem um código único, nome, descrição, preço e quantidade 
-// disponível em inventário.
-// A classe fornece métodos para adicionar produtos ao inventário, atualizar 
+// disponível no catálogo.
+// A classe fornece métodos para adicionar produtos ao catálogo, atualizar 
 // a quantidade disponível e listar os detalhes de um produto.
 //
 // Principais Funcionalidades:
-// - Adicionar novo produto ao inventário.
+// - Adicionar um novo produto ao catálogo.
 // - Atualizar quantidade disponível de um produto.
 // - Listar detalhes de um produto.
 //
