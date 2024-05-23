@@ -121,7 +121,8 @@ class Program
                         Console.Write("Código do Produto: ");
                         codigo = int.Parse(Console.ReadLine());
                         produto = loja.ObterProdutoPorCodigo(codigo);
-                        //Console.WriteLine("Produto disponiveis: " + produto.Disponiveis + " Código: " + codigo);
+                        // DEBUG
+                        // Console.WriteLine("Produto disponiveis: " + produto.Disponiveis + " Código: " + codigo);
                         if (produto != null && produto.Disponiveis > 0)
                         {
                             cliente.AdicionarAoCarrinho(produto);
@@ -173,8 +174,11 @@ class Program
                     email = Console.ReadLine();
                     cliente = loja.ObterClientePorEmail(email);
                     loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
+                                        
                     if (cliente != null)
                     {
+                        Console.WriteLine("Valor do desconto: " + loja.getDesconto());
+                        loja.AplicarDesconto(cliente, loja.getDesconto());
                         double total = cliente.CalcularTotal();
                         loja.ProcessarVenda(cliente);
                         Console.WriteLine($"Compra finalizada. Total: {total:C2}");

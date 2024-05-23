@@ -33,10 +33,12 @@ namespace Loja_Virtual
     {
         private string connectionString = "Data Source=loja_virtual.db";
 
+        private double desconto;
         // Construtor da classe Loja_Virtual
         public LojaVirtual()
         {
             CriarBaseDeDados();
+            desconto = 10.0;     // Desconto de 10%
         }
 
         // Método para criar a base de dados e as tabelas produtos, clientes e carrinhodecompras.
@@ -457,5 +459,18 @@ namespace Loja_Virtual
             cliente.CarrinhoDeCompras.Clear();
            }
         }
+        public void AplicarDesconto(Cliente cliente, double desconto)
+        {
+            foreach ( var produto in cliente.CarrinhoDeCompras)
+                produto.Preco = produto.Preco - produto.Preco*(desconto/100.0);
+        }
+
+        // Método para retornar o valor do desconto definido
+        public double getDesconto()
+        {
+            return desconto;
+        }
     }
+
+
 }
