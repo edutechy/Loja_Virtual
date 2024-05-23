@@ -147,9 +147,10 @@ class Program
                     Console.Write("Email do Cliente: ");
                     email = Console.ReadLine();
                     cliente = loja.ObterClientePorEmail(email);
-                    loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
+                    
                     if (cliente != null)
                     {
+                        loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
                         Console.Write("Código do Produto: ");
                         codigo = int.Parse(Console.ReadLine());
                         produto = loja.ObterProdutoPorCodigo(codigo);
