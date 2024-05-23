@@ -115,9 +115,10 @@ class Program
                     Console.Write("Email do Cliente: ");
                     email = Console.ReadLine();
                     cliente = loja.ObterClientePorEmail(email);
-                    loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
+                   
                     if (cliente != null)
                     {
+                        loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
                         Console.Write("Código do Produto: ");
                         codigo = int.Parse(Console.ReadLine());
                         produto = loja.ObterProdutoPorCodigo(codigo);
@@ -173,10 +174,10 @@ class Program
                     Console.Write("Email do Cliente: ");
                     email = Console.ReadLine();
                     cliente = loja.ObterClientePorEmail(email);
-                    loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
-                                        
+                                                    
                     if (cliente != null)
                     {
+                        loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
                         Console.WriteLine("Valor do desconto: " + loja.getDesconto());
                         loja.AplicarDesconto(cliente, loja.getDesconto());
                         double total = cliente.CalcularTotal();
@@ -199,9 +200,10 @@ class Program
                     Console.Write("Email do Cliente: ");
                     email = Console.ReadLine();
                     cliente = loja.ObterClientePorEmail(email);
-                    loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
+                    
                     if (cliente != null)
                     {
+                        loja.CarregarCarrinhoDeComprasNaoFechadas(cliente);
                         cliente.ListarCarrinhoDeCompras();
                     }
                     else

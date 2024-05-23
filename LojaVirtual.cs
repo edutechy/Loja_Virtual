@@ -343,7 +343,8 @@ namespace Loja_Virtual
         // Método para carregar a lista CarrinhoDeCompras com as compras não fechadas
         public void CarregarCarrinhoDeComprasNaoFechadas(Cliente cliente)
         {
-            cliente.CarrinhoDeCompras.Clear(); // Limpa a lista antes de carregar novos itens
+            if (cliente.CarrinhoDeCompras!= null)
+                cliente.CarrinhoDeCompras.Clear(); // Limpa a lista antes de carregar novos itens
 
             string consulta = "SELECT p.Codigo, p.Nome, p.Descricao, p.Preco, p.Disponiveis " +
                               "FROM carrinhodecompras c " +
